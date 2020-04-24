@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component} from 'react';
 import './App.css';
+import CardList from './card/cardList';
+import Form from './form';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { users: [] };
+  }
+
+  fetchUsers = async () => {
+    const resp = await fetch('/users.json');
+    const users = await resp.json();
+    this.setState({users});
+  }
+
+  componentDidMount() {
+    this.fetchUsers();
+  }
+
+  addUser = (user) => {
+    this.setState(prevState => ({
+      users: [...prevState.users, user]
+    }))
+  }
+
+  render() {
+    return ( 
+      <div className="container"> 
+        <div className="header mt-5">{this.props.title}</div>
+          <div className="m-3">
+            <Form addUser={this.addUser} />
+          </div>
+          <CardList users={this.state.users}/>
+      </div>
+    );
+  }
 }
-
+ 
 export default App;
